@@ -439,9 +439,16 @@ The argument STATE is optional.  The default state is `:pomodoro`."
   ;; add the org-pomodoro-mode-line to the global-mode-string
   (unless global-mode-string (setq global-mode-string '("")))
   (unless (memq 'org-pomodoro-mode-line global-mode-string)
-    (setq global-mode-string (append global-mode-string
-                                     '(org-pomodoro-mode-line))))
-
+    (let ((o (memq 'org-mode-line-string global-mode-string)))
+      (setq global-mode-string
+            (if o
+                (append (delete
+                         'org-pomodoro-mode-line
+                         (delete 'org-mode-line-string global-mode-string))
+                        '(org-pomodoro-mode-line
+                          org-mode-line-string))
+              (append global-mode-string
+                      '(org-pomodoro-mode-line))))))
   (org-pomodoro-set (or state :pomodoro))
 
   (when (eq org-pomodoro-state :pomodoro)
