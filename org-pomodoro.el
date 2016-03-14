@@ -395,7 +395,8 @@ or :break when starting a break.")
   "Update the agenda buffer if it exists."
   (let ((buf (get-buffer org-agenda-buffer-name)))
     (when (bufferp buf)
-      (with-current-buffer buf
+      (save-window-excursion
+        (switch-to-buffer buf)
         (org-agenda-redo t)))))
 
 (defun org-pomodoro-kill ()
