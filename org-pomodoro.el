@@ -423,19 +423,18 @@ invokes the handlers for finishing."
 
 (defun org-pomodoro-set (state)
   "Set the org-pomodoro STATE."
-  (setq org-pomodoro-state state
-        org-pomodoro-countdown
-          (cl-case state
-            (:pomodoro (* 60 org-pomodoro-length))
-            (:short-break (* 60 org-pomodoro-short-break-length))
-            (:long-break (* 60 org-pomodoro-long-break-length)))
-        org-pomodoro-timer (run-with-timer t 1 'org-pomodoro-tick)))
+  (setq org-pomodoro-state state)
+  (setq org-pomodoro-countdown
+        (cl-case state
+          (:pomodoro (* 60 org-pomodoro-length))
+          (:short-break (* 60 org-pomodoro-short-break-length))
+          (:long-break (* 60 org-pomodoro-long-break-length))))
+  (setq org-pomodoro-timer (run-with-timer t 1 'org-pomodoro-tick)))
 
 (defun org-pomodoro-start (&optional state)
   "Start the `org-pomodoro` timer.
 The argument STATE is optional.  The default state is `:pomodoro`."
   (when org-pomodoro-timer (cancel-timer org-pomodoro-timer))
-
   ;; add the org-pomodoro-mode-line to the global-mode-string
   (unless global-mode-string (setq global-mode-string '("")))
   (unless (memq 'org-pomodoro-mode-line global-mode-string)
@@ -484,6 +483,7 @@ This may send a notification, play a sound and start a pomodoro break."
   (org-pomodoro-notify "Pomodoro completed!" "Time for a break.")
   (org-pomodoro-update-mode-line)
   (org-pomodoro-maybe-update-agenda)
+  (org-save-all-org-buffers)
   (run-hooks 'org-pomodoro-finished-hook))
 
 (defun org-pomodoro-killed ()
@@ -538,7 +538,6 @@ When no timer is running for `org-pomodoro` a new pomodoro is started and
 the current task is clocked in.  Otherwise EMACS will ask whether we´d like to
 kill the current timer, this may be a break or a running pomodoro."
   (interactive "P")
-
   (when (and org-pomodoro-last-clock-in
              org-pomodoro-expiry-time
              (org-pomodoro-expires-p)
