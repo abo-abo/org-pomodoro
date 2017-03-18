@@ -42,6 +42,7 @@
 (require 'org-clock)
 (require 'org-timer)
 (require 'alert)
+(require 'gtk-pomodoro-indicator)
 
 ;;; Custom Variables
 
@@ -434,6 +435,12 @@ invokes the handlers for finishing."
 (defun org-pomodoro-start (&optional state)
   "Start the `org-pomodoro` timer.
 The argument STATE is optional.  The default state is `:pomodoro`."
+  (gtk-pomodoro-indicator
+   (cl-case state
+     (:pomodoro "p 25")
+     (:short-break "b 5")
+     (:long-break "b 20")
+     (t (error "unexpected"))))
   (when org-pomodoro-timer (cancel-timer org-pomodoro-timer))
   ;; add the org-pomodoro-mode-line to the global-mode-string
   (unless global-mode-string (setq global-mode-string '("")))
