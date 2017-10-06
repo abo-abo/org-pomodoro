@@ -42,7 +42,8 @@
 (require 'org-clock)
 (require 'org-timer)
 (require 'alert)
-(require 'gtk-pomodoro-indicator)
+(unless (require 'gtk-pomodoro-indicator nil t)
+  (defalias 'gtk-pomodoro-indicator 'ignore))
 
 ;;; Custom Variables
 
